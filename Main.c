@@ -6,12 +6,13 @@
 /*   By: honguyen <honguyen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/18 10:00:21 by honguyen          #+#    #+#             */
-/*   Updated: 2023/11/18 10:57:14 by honguyen         ###   ########.fr       */
+/*   Updated: 2023/11/22 21:01:16 by honguyen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
-#include <unistd.h>
+// #include <stdio.h>
+// #include <unistd.h>
+// #include "get_next_line.h"
 
 // void	static_var_exm(void)
 // {
@@ -67,20 +68,68 @@
 // 	return (0);
 // }
 
-#define BUFFER_SIZE 1024
+//#define BUFFER_SIZE 1024
+// #include "get_next_line.h"
+
+// int	main(void)
+// {
+// 	char	buffer[BUFFER_SIZE];
+// 	ssize_t	bytes_read;
+
+// 	bytes_read = read(STDIN_FILENO, buffer, sizeof(buffer) - 1);
+// 	if (bytes_read == -1)
+// 	{
+// 		perror("Error reading from standard input");
+// 		return (1);
+// 	}
+// 	buffer[bytes_read] = '\0';
+// 	printf("bytes_read: %zd, contents: %s", bytes_read, buffer);
+// 	return (0);
+// }
+
+// int	main(int ac, char **av)
+// {
+// 	char			*line;
+// 	int				fd;
+// 	int				i;
+
+// 	(void)ac;
+// 	fd = open(av[1], O_RDONLY);
+// 	if (!fd)
+// 		return (1);
+// 	i = 0;
+// 	while (i++ < GNL_CALL)
+// 	{
+// 		line = get_next_line(fd);
+// 		if (!line)
+// 			break ;
+// 		if (THEN_DIFF)
+// 			printf("%s", line);
+// 		else
+// 			printf("line [%02d]: %s", i, line);
+// 		free(line);
+// 	}
+// 	close(fd);
+// 	return (0);
+// }
+
+#include "get_next_line.h"
+#include <fcntl.h>
+#include <stdio.h>
 
 int	main(void)
 {
-	char	buffer[BUFFER_SIZE];
-	ssize_t	bytes_read;
+	int fd = 0;
+	char *to_free;
 
-	bytes_read = read(STDIN_FILENO, buffer, sizeof(buffer) - 1);
-	if (bytes_read == -1)
+	fd = open("test.txt", O_RDWR);
+	to_free = get_next_line(fd);
+	printf("%s", to_free);
+	while(to_free)
 	{
-		perror("Error reading from standard input");
-		return (1);
+		to_free = get_next_line(fd);
+		printf("%s", to_free);
 	}
-	buffer[bytes_read] = '\0';
-	printf("bytes_read: %zd, contents: %s", bytes_read, buffer);
-	return (0);
+	free(to_free);
+	close(fd);
 }
