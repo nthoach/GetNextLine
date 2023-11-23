@@ -120,16 +120,16 @@
 int	main(void)
 {
 	int fd = 0;
-	char *to_free;
+	char *line_out;
 
 	fd = open("test.txt", O_RDWR);
-	to_free = get_next_line(fd);
-	printf("%s", to_free);
-	while(to_free)
+	line_out = get_next_line(fd);
+	printf("%s", line_out);
+	while(line_out)
 	{
-		to_free = get_next_line(fd);
-		printf("%s", to_free);
+		line_out = get_next_line(fd);
+		printf("%s", line_out);
 	}
-	free(to_free);
+	free(line_out);
 	close(fd);
 }

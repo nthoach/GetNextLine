@@ -22,10 +22,10 @@
 # endif
 
 /* Major functions */
+char	*add2_line(int fd, char *ptr_line);
+char	*take_line(char	*ptr_line);
+char	*renew_line(char *ptr_line);
 char	*get_next_line(int fd);
-char	*redudant_line(char *current_line);
-char	*refine_line(char *current_line);
-char	*read_raw_line(int fd, char *current_line);
 
 /* Utilities functions */
 size_t	strchr_gnl(const char *s, int c);

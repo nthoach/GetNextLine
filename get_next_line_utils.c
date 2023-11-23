@@ -46,6 +46,7 @@ char	*strjoin_gnl(char *s1, const char *s2)
 	while (*s2)
 		*j_s++ = *s2++;
 	*j_s = '\0';
+	free(s1);
 	return (ptr);
 }
 

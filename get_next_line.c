@@ -20,13 +20,14 @@
 char	*add2_line(int fd, char *ptr_line)
 {
 	char	*buff;
+	char	*ptr_line1;
 	ssize_t	nb;
 
 	buff = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
 	if (!buff)
 		return (NULL);
 	nb = 1;
-	while (nb && strchr_gnl(ptr_line, '\n') == 0)
+	while (nb != 0 && strchr_gnl(ptr_line, '\n') == 0)
 	{
 		nb = read(fd, buff, BUFFER_SIZE);
 		if (nb == -1)
@@ -36,10 +37,11 @@ char	*add2_line(int fd, char *ptr_line)
 			return (NULL);
 		}
 		buff[nb] = '\0';
-		ptr_line = strjoin_gnl(ptr_line, buff);
+		ptr_line1 = strjoin_gnl(ptr_line, buff);
 	}
 	free(buff);
-	return (ptr_line);
+	free(ptr_line);
+	return (ptr_line1);
 }
 
 /* get the line by terminating at the true \n or eof
@@ -52,15 +54,15 @@ char	*take_line(char	*ptr_line)
 	char	*line_out;
 	size_t	i;
 
-	if (!ptr_line)
+	if (ptr_line == NULL)
 		return (NULL);
 	i = 0;
-	while (ptr_line[i] && ptr_line[i] != '\n')
+	while (ptr_line[i] != '\0' && ptr_line[i] != '\n')
 		i++;
-	line_out = (char *)malloc(sizeof(char) * i);
+	line_out = (char *)malloc(sizeof(char) * (i + 1));
 	if (!line_out)
 		return (NULL);
-	strcpy_gnl(line_out, ptr_line, i - 1);
+	strcpy_gnl(line_out, ptr_line, i);
 	return (line_out);
 }
 
@@ -76,16 +78,16 @@ char	*renew_line(char *ptr_line)
 	int		i;
 
 	i = 0;
-	while (!(ptr_line[i]) || ptr_line[i] != '\n')
+	while (ptr_line[i] != '\0' || ptr_line[i] != '\n')
 		i++;
-	if (!ptr_line[i])
+	if (ptr_line[i] == '\0')
 	{
 		free(ptr_line);
 		return (NULL);
 	}
 	new_line = (char *)malloc(sizeof(char)
 			* (strlen_gnl(ptr_line + i) + 1));
-	if (!new_line)
+	if (new_line == NULL)
 	{
 		free(ptr_line);
 		return (NULL);
@@ -111,7 +113,7 @@ char	*get_next_line(int fd)
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
 	ptr_line = add2_line(fd, ptr_line);
-	if (ptr_line == 0)
+	if (ptr_line == NULL)
 		return (NULL);
 	line_out = take_line(ptr_line);
 	ptr_line = renew_line(ptr_line);
