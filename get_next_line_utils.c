@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: honguyen <honguyen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nthoach <nthoach@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/19 12:58:08 by honguyen          #+#    #+#             */
-/*   Updated: 2023/11/22 21:04:47 by honguyen         ###   ########.fr       */
+/*   Updated: 2023/11/23 22:35:21 by nthoach          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,6 @@ char	*strjoin_gnl(char *s1, const char *s2)
 	while (*s2)
 		*j_s++ = *s2++;
 	*j_s = '\0';
-	free(s1);
 	return (ptr);
 }
 
@@ -55,7 +54,7 @@ char	*strcpy_gnl(char *d, const char *s, size_t n)
 	size_t	i;
 
 	i = 0;
-	while (s[i] && i < n - 1)
+	while (s[i] && i < n)
 	{
 		d[i] = s[i];
 		i++;
