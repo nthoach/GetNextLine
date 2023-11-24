@@ -12,16 +12,16 @@
 
 #include "get_next_line_bonus.h"
 
-size_t	len_str_gnl(const char *str)
+size_t	len_str_gnl(const char *s)
 {
 	size_t	len;
 
 	len = 0;
-	if (!str)
+	if (!s)
 		return (0);
-	while (str[len] && str[len] != '\n')
+	while (s[len] && s[len] != '\n')
 		len++;
-	if (str[len] == '\n') /*count only one '\n' in the len*/
+	if (s[len] == '\n') /*count only one '\n' in the len*/
 		len++;
 	return (len);
 }
@@ -44,8 +44,8 @@ char	*join_str_gnl(char *s1, char *s2)
 	j = 0;
 	while (s2 && s2[j])
 	{
-		line_out[i++] = s2[j++]; /*should copy the first '\n'*/
-		if (s2[j-1] == '\n')
+		line_out[i] = s2[j++]; /*should copy the first '\n'*/
+		if (line_out[i++] == '\n')
 			break ;
 	}
 	line_out[i] = '\0';
@@ -65,14 +65,16 @@ size_t	edit_str_gnl(char *ptr) /*edit str after found out '\n' or '\0'*/
 	{
 		if (flag == 1)
 		{
-			ptr[j++] = ptr[i];
+			ptr[j] = ptr[i];
+			j++;
 		}
 		if (ptr[i] == '\n')
 			flag = 1;
 		ptr[i] = '\0';
 		i++;		
 	}
+	ptr[j] = '\0';
+	ptr[i] = '\0';
 	return (flag);
 }
-
 

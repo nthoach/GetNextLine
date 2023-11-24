@@ -14,7 +14,7 @@
 # define GET_NEXT_LINE_BONUS_H
 
 # ifndef BUFFER_SIZE
-# define BUFFER_SIZE 5
+# define BUFFER_SIZE 15
 # endif
 
 # include <unistd.h>
@@ -26,5 +26,6 @@ char	*get_next_line(int fd);
 char	*join_str_gnl(char *s1, char *s2);
 size_t	len_str_gnl(const char *str);
 size_t	edit_str_gnl(char *str);
+char	*ft_strdup(char *s);
 
 #endif

@@ -31,9 +31,12 @@ int	main(void)
     	}
 
     	// Write content to the file
-    	fprintf(file, "1-This is a test\n");
-    	fprintf(file, "2-This is the second line.\n");
-    	fprintf(file, "3-This is the last line.\n");
+    	fprintf(file, "0123456789\n");
+    	fprintf(file, "0123456789\n");
+	fprintf(file, "0123456789\n");
+	fprintf(file, "0123456789\n");
+	fprintf(file, "0123456789\n");
+	fprintf(file, "0123456789\n");
 
     	// Close the file
     	fclose(file);
