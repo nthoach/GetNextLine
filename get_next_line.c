@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: honguyen <honguyen@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nthoach <nthoach@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/18 12:48:48 by honguyen          #+#    #+#             */
-/*   Updated: 2023/11/22 21:10:42 by honguyen         ###   ########.fr       */
+/*   Updated: 2023/11/23 22:50:10 by nthoach          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,10 @@
 char	*add2_line(int fd, char *ptr_line)
 {
 	char	*buff;
-	char	*ptr_line1;
 	ssize_t	nb;
 
 	buff = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
-	if (!buff)
+	if (buff == NULL)
 		return (NULL);
 	nb = 1;
 	while (nb != 0 && strchr_gnl(ptr_line, '\n') == 0)
@@ -37,11 +36,11 @@ char	*add2_line(int fd, char *ptr_line)
 			return (NULL);
 		}
 		buff[nb] = '\0';
-		ptr_line1 = strjoin_gnl(ptr_line, buff);
+		ptr_line = strjoin_gnl(ptr_line, buff);
+		//printf("%s\n", ptr_line);
 	}
 	free(buff);
-	free(ptr_line);
-	return (ptr_line1);
+	return (ptr_line);
 }
 
 /* get the line by terminating at the true \n or eof
@@ -78,13 +77,14 @@ char	*renew_line(char *ptr_line)
 	int		i;
 
 	i = 0;
-	while (ptr_line[i] != '\0' || ptr_line[i] != '\n')
+	while (ptr_line[i] != '\0' && ptr_line[i] != '\n')
 		i++;
 	if (ptr_line[i] == '\0')
 	{
 		free(ptr_line);
 		return (NULL);
 	}
+	//printf("%d\n", i);
 	new_line = (char *)malloc(sizeof(char)
 			* (strlen_gnl(ptr_line + i) + 1));
 	if (new_line == NULL)
@@ -92,8 +92,8 @@ char	*renew_line(char *ptr_line)
 		free(ptr_line);
 		return (NULL);
 	}
-	i++;
-	strcpy_gnl(new_line, ptr_line + i, strlen_gnl(ptr_line + i));
+	strcpy_gnl(new_line, ptr_line + i + 1, strlen_gnl(ptr_line + i + 1));
+	//printf("%s\n", new_line);
 	free(ptr_line);
 	return (new_line);
 }
@@ -110,12 +110,16 @@ char	*get_next_line(int fd)
 	static char	*ptr_line;
 	char		*line_out;
 
-	if (fd < 0 || BUFFER_SIZE <= 0)
+	if (fd < 0 || BUFFER_SIZE < 1)
 		return (NULL);
+	//printf("%d : %s\n", fd, ptr_line); //
 	ptr_line = add2_line(fd, ptr_line);
+	//printf("%d : %s\n", fd, ptr_line); //
 	if (ptr_line == NULL)
 		return (NULL);
 	line_out = take_line(ptr_line);
+	//printf("%s\n", line_out);
 	ptr_line = renew_line(ptr_line);
+	//printf("%s\n", ptr_line);
 	return (line_out);
 }
