@@ -5,121 +5,34 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: nthoach <nthoach@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/18 12:48:48 by honguyen          #+#    #+#             */
-/*   Updated: 2023/11/23 22:50:10 by nthoach          ###   ########.fr       */
+/*   Created: 2023/11/24 09:52:41 by marvin            #+#    #+#             */
+/*   Updated: 2023/11/25 09:56:29 by nthoach          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
-
-/* add2_line
-1- read reach buffer
-2- join with old string to make a raw line
-*/
-
-char	*add2_line(int fd, char *ptr_line)
-{
-	char	*buff;
-	ssize_t	nb;
-
-	buff = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
-	if (buff == NULL)
-		return (NULL);
-	nb = 1;
-	while (nb != 0 && strchr_gnl(ptr_line, '\n') == 0)
-	{
-		nb = read(fd, buff, BUFFER_SIZE);
-		if (nb == -1)
-		{
-			free(buff);
-			free(ptr_line);
-			return (NULL);
-		}
-		buff[nb] = '\0';
-		ptr_line = strjoin_gnl(ptr_line, buff);
-		//printf("%s\n", ptr_line);
-	}
-	free(buff);
-	return (ptr_line);
-}
-
-/* get the line by terminating at the true \n or eof
-1- check crash
-2- malloc to create a new true line
-2- copy current_line to the true-line by length*/
-
-char	*take_line(char	*ptr_line)
-{
-	char	*line_out;
-	size_t	i;
-
-	if (ptr_line == NULL)
-		return (NULL);
-	i = 0;
-	while (ptr_line[i] != '\0' && ptr_line[i] != '\n')
-		i++;
-	line_out = (char *)malloc(sizeof(char) * (i + 1));
-	if (!line_out)
-		return (NULL);
-	strcpy_gnl(line_out, ptr_line, i);
-	return (line_out);
-}
-
-/* update the current_line by the remain of the last 
-current_line after refining the true-line 
-1- check crash
-2- if perfect true --> free and return null
-3- if redudant, malloc and copy the rest*/
-
-char	*renew_line(char *ptr_line)
-{
-	char	*new_line;
-	int		i;
-
-	i = 0;
-	while (ptr_line[i] != '\0' && ptr_line[i] != '\n')
-		i++;
-	if (ptr_line[i] == '\0')
-	{
-		free(ptr_line);
-		return (NULL);
-	}
-	//printf("%d\n", i);
-	new_line = (char *)malloc(sizeof(char)
-			* (strlen_gnl(ptr_line + i) + 1));
-	if (new_line == NULL)
-	{
-		free(ptr_line);
-		return (NULL);
-	}
-	strcpy_gnl(new_line, ptr_line + i + 1, strlen_gnl(ptr_line + i + 1));
-	//printf("%s\n", new_line);
-	free(ptr_line);
-	return (new_line);
-}
-
-/* main functions: */
-/*
-1- add2_line:adding each buffer reading to make line
-2- take_line: taking the true line to output
-3- renew_line: update pointer for new_line reading
- */
+#include "get_next_line_bonus.h"
 
 char	*get_next_line(int fd)
 {
-	static char	*ptr_line;
-	char		*line_out;
-
-	if (fd < 0 || BUFFER_SIZE < 1)
+	char	*line;
+	static char	ptr[FOPEN_MAX][BUFFER_SIZE + 1];
+	
+	if (fd < 0 || fd > FOPEN_MAX || BUFFER_SIZE < 1)
 		return (NULL);
-	//printf("%d : %s\n", fd, ptr_line); //
-	ptr_line = add2_line(fd, ptr_line);
-	//printf("%d : %s\n", fd, ptr_line); //
-	if (ptr_line == NULL)
-		return (NULL);
-	line_out = take_line(ptr_line);
-	//printf("%s\n", line_out);
-	ptr_line = renew_line(ptr_line);
-	//printf("%s\n", ptr_line);
-	return (line_out);
+	line = NULL;
+	while (ptr[fd][0] || read(fd, ptr[fd], BUFFER_SIZE) > 0) /*read until EOF or cannot read*/
+	{
+		//ptr[fd][BUFFER_SIZE] = '\0';
+		line = join_str_gnl(line, ptr[fd]); /*special join: ending by true line*/
+		if (len_str_gnl(ptr[fd]) == 0) /*There is no more line*/
+			return (line);
+		if (edit_str_gnl(ptr[fd]) == 1) /*untill found '\n' or '\0', edit ptr to new start of line*/
+			break ;
+		if (read(fd, ptr[fd], 0) < 0) /* reading failure*/
+		{
+			free(line);
+			return (NULL);
+		}
+	}
+	return (line);
 }

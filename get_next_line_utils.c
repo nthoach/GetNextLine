@@ -5,72 +5,77 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: nthoach <nthoach@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/19 12:58:08 by honguyen          #+#    #+#             */
-/*   Updated: 2023/11/23 22:35:21 by nthoach          ###   ########.fr       */
+/*   Created: 2023/11/24 10:26:19 by marvin            #+#    #+#             */
+/*   Updated: 2023/11/24 20:57:15 by nthoach          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
-size_t	strchr_gnl(const char *s, int c)
+size_t	len_str_gnl(const char *s)
 {
+	size_t	len;
+
+	len = 0;
 	if (!s)
 		return (0);
-	while (*s)
-	{
-		if ((unsigned char)(*s) == (unsigned char)c)
-			return (1);
-		s++;
-	}
-	return (0);
+	while (s[len] && s[len] != '\n')
+		len++;
+	if (s[len] == '\n') /*count only one '\n' in the len*/
+		len++;
+	return (len);
 }
 
-char	*strjoin_gnl(char *s1, const char *s2)
+char	*join_str_gnl(char *s1, char *s2)
 {
-	char	*j_s;
-	char	*ptr;
-	size_t	len_t;
-
-	if (!s1)
-	{
-		s1 = malloc(sizeof(char) * 1);
-		*s1 = '\0';
-	}
-	len_t = strlen_gnl(s1) + strlen_gnl(s2);
-	j_s = (char *)malloc((len_t + 1) * sizeof(char));
-	if (!j_s)
-		return (NULL);
-	ptr = j_s;
-	while (*s1)
-		*j_s++ = *s1++;
-	while (*s2)
-		*j_s++ = *s2++;
-	*j_s = '\0';
-	return (ptr);
-}
-
-char	*strcpy_gnl(char *d, const char *s, size_t n)
-{
+	char		*line_out;
 	size_t	i;
+	size_t	j;
 
 	i = 0;
-	while (s[i] && i < n)
+	j = 0;
+
+	line_out = (char *)malloc(sizeof(char) * (len_str_gnl(s1) + 
+			len_str_gnl(s2) + 1));
+	if (!line_out)
+		return (NULL);
+	while (s1 && s1[j])
+		line_out[i++] = s1[j++];
+	j = 0;
+	while (s2 && s2[j])
 	{
-		d[i] = s[i];
-		i++;
+		line_out[i] = s2[j++]; /*should copy the first '\n'*/
+		if (line_out[i++] == '\n')
+			break ;
 	}
-	d[i] = '\0';
-	return (d);
+	line_out[i] = '\0';
+	if (!s1)
+		free(s1);
+	return (line_out);
 }
-
-size_t	strlen_gnl(const char	*s)
+size_t	edit_str_gnl(char *ptr) /*edit str after found out '\n' or '\0'*/
 {
-	size_t	len_str;
+	size_t	i;
+	size_t	j;
+	size_t	flag;
 
-	len_str = 0;
-	if (!s)
+	i = 0;
+	j = 0;
+	flag = 0;
+	if (!ptr)
 		return (0);
-	while (s[len_str])
-		len_str++;
-	return (len_str);
+	while (ptr[i] != '\0')
+	{
+		if (flag == 1)
+		{
+			ptr[j] = ptr[i];
+			j++;
+		}
+		if (ptr[i] == '\n')
+			flag = 1;
+		ptr[i] = '\0';
+		i++;		
+	}
+	ptr[j] = '\0';
+	return (flag);
 }
